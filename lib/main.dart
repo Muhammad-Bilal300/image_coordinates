@@ -1,9 +1,14 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:image_view/image_upload_screen.dart';
+import 'package:image_view/sharedProvider.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => SharedImageProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -23,6 +28,27 @@ class MyApp extends StatelessWidget {
     });
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // import 'dart:ffi';
 // import 'dart:math';
