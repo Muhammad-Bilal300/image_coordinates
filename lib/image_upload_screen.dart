@@ -131,7 +131,7 @@ class _PhotoHeroState extends State<PhotoHero> {
                   child: Hero(
                     tag: widget.photo,
                     child: Material(
-                      color: Colors.transparent,
+                      color: Color.fromARGB(0, 68, 31, 31),
                       child: GestureDetector(
                         onTap: widget.onTap,
                         child: Image.file(

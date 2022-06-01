@@ -90,8 +90,8 @@ class _ImagePreviewState extends State<ImagePreview> {
           width: 100.w,
           height: 600,
           child: Stack(
-              children: List.generate(provider.stackWidgets.length, (index) {
-            return provider.stackWidgets[index];
+              children: List.generate(provider.widgetList.length, (index) {
+            return provider.widgetList[index];
           })),
         ),
       ),
