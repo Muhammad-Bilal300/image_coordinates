@@ -9,6 +9,8 @@ class SharedImageProvider extends ChangeNotifier {
   double? posx;
   double? posy;
   List<dynamic> positions = [];
+  double imgScale = 0;
+  double imgZoom = 0;
 
   Function(int, double, double)? callback;
 
@@ -20,6 +22,12 @@ class SharedImageProvider extends ChangeNotifier {
     //   "posx": posx,
     //   "posy": posy,
     // });
+  }
+
+  getScaleAndZoom(scale, zoom) {
+    imgScale = scale;
+    imgZoom = zoom;
+    notifyListeners();
   }
 
   void removeElement(i) {
@@ -53,13 +61,8 @@ class SharedImageProvider extends ChangeNotifier {
   //       )));
   //   notifyListeners();
   // }
-  void addTapWidgets(double x, double y) {
-    var position = {"posx": x, "posy": y, "inposx": x, "inposy": y};
 
-  
-      positions.add(position);
-   
-
+  void temporaryTapWidgets() {
     var index = positions.length - 1;
 
     var p = Positioned(
@@ -89,8 +92,47 @@ class SharedImageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addTapWidgets(double x, double y) {
+    var position = {"posx": x, "posy": y, "inposx": x, "inposy": y};
+
+    positions.add(position);
+
+    var index = positions.length - 1;
+
+    // var p = Positioned(
+    //     left: positions[index]["posx"],
+    //     top: positions[index]["posy"],
+    //     child: Draggable(
+    //       childWhenDragging: Container(),
+    //       feedback: Container(
+    //         height: 15,
+    //         width: 15,
+    //         decoration:
+    //             BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    //       ),
+    //       onDragEnd: (dragDetails) {
+    //         posx = dragDetails.offset.dx;
+    //         // if applicable, don't forget offsets like app/status bar
+    //         posx = dragDetails.offset.dy;
+    //       },
+    //       child: Container(
+    //         height: 15,
+    //         width: 15,
+    //         decoration:
+    //             BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    //       ),
+    //     ));
+    // stackWidgets.add(p);
+    notifyListeners();
+  }
+
   clearWidgets() {
     stackWidgets.clear();
+    notifyListeners();
+  }
+
+  clearPositions() {
+    positions.clear();
     notifyListeners();
   }
 
@@ -118,33 +160,106 @@ class SharedImageProvider extends ChangeNotifier {
           width: 100.w,
           child: GestureDetector(
             onTapDown: (details) {
-              // print(details.localPosition.dx);
-              //global position
-              // print(details.localPosition.dy);
-              // setState(() {
+              if (positions.length > 0) {
+                return;
+              }
               posx = details.localPosition.dx;
               posy = details.localPosition.dy;
-
+              print("x: ${posx}");
+              print("y: ${posy}");
               setpositions(details.localPosition.dx, details.localPosition.dy);
-              // print(stackWidgets.length);
+              addTapWidgets(posx ?? 100, posy ?? 100);
+              temporaryTapWidgets();
+
+              // clearWidgets();
+              // print("Stack Widgets:");
+              // print(stackWidgets);
+              // print("positions:");
+              // print(positions);
+
+              // addwidgets(width, photo, onTap);
+              // //
+              // //
+              // //
               // print(positions.length);
               // print(positions);
-              // updatePositions(
-              //     details.localPosition.dx, details.localPosition.dy);
-              addTapWidgets(posx ?? 100, posy ?? 100);
-            },
-            onTap: onTap,
+              // for (var i = 0; i < positions.length; i++) {
+              //   var p = Positioned(
+              //       left: positions[i]["posx"],
+              //       top: positions[i]["posy"],
+              //       child: Draggable(
+              //         childWhenDragging: Container(),
+              //         feedback: Container(
+              //           height: 15,
+              //           width: 15,
+              //           decoration: BoxDecoration(
+              //               shape: BoxShape.circle, color: Colors.white),
+              //         ),
+              //         onDragEnd: (dragDetails) {
+              //           // posx = dragDetails.offset.dx;
+              //           // // if applicable, don't forget offsets like app/status bar
+              //           // posx = dragDetails.offset.dy;
+              //         },
+              //         child: Container(
+              //           height: 15,
+              //           width: 15,
+              //           decoration: BoxDecoration(
+              //               shape: BoxShape.circle, color: Colors.white),
+              //         ),
+              //       ));
+              //   stackWidgets.add(p);
+              // }
 
-            // child: InteractiveViewer(
-            //   panEnabled: false, // Set it to false to prevent panning.
-            //   boundaryMargin: EdgeInsets.all(80),
-            //   minScale: 0.5,
-            //   maxScale: 4,
-            //   child: Image.file(
-            //     photo,
-            //     fit: BoxFit.fill,
-            //   ),
-            // ),
+              // Add Your Code here.
+            },
+            onTap: () {
+              print("Hello World");
+              // WidgetsBinding.instance?.addPostFrameCallback((_) {
+              //   // Add Your Code here.
+              //   print("stackWidgets: ${stackWidgets}");
+              //   print("positions: ${positions}");
+              //   print("------");
+              //   print("---------");
+              //   clearWidgets();
+              //   print("Stack Widgets:");
+              //   print(stackWidgets);
+              //   print("positions:");
+              //   print(positions);
+
+              //   addwidgets(width, photo, onTap);
+              //   //
+              //   //
+              //   //
+              //   print(positions.length);
+              //   print(positions);
+              //   for (var i = 0; i < positions.length; i++) {
+              //     var p = Positioned(
+              //         left: positions[i]["posx"],
+              //         top: positions[i]["posy"],
+              //         child: Draggable(
+              //           childWhenDragging: Container(),
+              //           feedback: Container(
+              //             height: 15,
+              //             width: 15,
+              //             decoration: BoxDecoration(
+              //                 shape: BoxShape.circle, color: Colors.white),
+              //           ),
+              //           onDragEnd: (dragDetails) {
+              //             // posx = dragDetails.offset.dx;
+              //             // // if applicable, don't forget offsets like app/status bar
+              //             // posx = dragDetails.offset.dy;
+              //           },
+              //           child: Container(
+              //             height: 15,
+              //             width: 15,
+              //             decoration: BoxDecoration(
+              //                 shape: BoxShape.circle, color: Colors.white),
+              //           ),
+              //         ));
+              //     stackWidgets.add(p);
+              //   }
+              // });
+            },
             child: Zoom(
               width: 100.w,
               height: 100.h,
@@ -164,8 +279,42 @@ class SharedImageProvider extends ChangeNotifier {
                 // print("Widget clicked");
               },
               onPositionUpdate: (Offset position) {
-                // print(position.dx);
-                // print(position.dy);
+                // print("position.direction: ${position.direction}");
+                // // print("position.distanceSquared: ${position.distanceSquared}");
+                // // print("position.distance: ${position.distance}");
+                // print("position.dx: ${position.dx}");
+                // print("position.dy: ${position.dy}");
+
+                var truncatedDX =
+                    double.parse(position.dx.toStringAsFixed(2)); // 682
+                var truncatedDY =
+                    double.parse(position.dy.toStringAsFixed(2)); // 682
+
+                for (int i = 0; i < positions.length; i++) {
+                  var item = positions[i];
+
+                  double posx = item["inposx"]; // 190
+                  double posy = item["inposy"]; // 271
+
+                  var truncatedScale =
+                      double.parse(imgScale.toStringAsFixed(2)); // 0.78
+
+                  var finalX = ((truncatedDX * truncatedScale) + posx);
+                  var finalY = ((truncatedDY * truncatedScale) + posy);
+
+                  // (1*0.2)+188
+                  // width - ((dx*scale) + (posx*scale))
+                  // 600-((0*0.18)+(188*0.18))
+
+                  print("truncatedDX ${truncatedDX}");
+                  print("posx ${posx}");
+                  print("truncatedScale ${truncatedScale}");
+                  print("finalX ${finalX}");
+                  print("finalX ${finalY}");
+                }
+
+                // ((682-190)*0.78)-190
+
                 // ZeroPositions(position.dx, position.dy);
                 // for (var i = 0; i < positions.length; i++) {
                 //   positions[i]["posx"] =
@@ -184,221 +333,111 @@ class SharedImageProvider extends ChangeNotifier {
                 // print(posy);
               },
               onScaleUpdate: (double scale, double zoom) {
-                var truncatedScale =
-                    double.parse(scale.toStringAsFixed(2)) - 0.22;
-                var truncatedZoom = double.parse(zoom.toStringAsFixed(2));
-                // print("$truncatedScale");
-                // print("$truncatedZoom");
+                WidgetsBinding.instance?.addPostFrameCallback((_) {
+                  var truncatedScale =
+                      double.parse(scale.toStringAsFixed(2)) - 0.22;
+                  var truncatedZoom = double.parse(zoom.toStringAsFixed(2));
+                  getScaleAndZoom(truncatedScale, truncatedZoom);
+                });
 
-                for (int i = 0; i < positions.length; i++) {
-                  var item = positions[i];
+                return;
+                WidgetsBinding.instance?.addPostFrameCallback((_) {
+                  // Add Your Code here.
+                  var truncatedScale =
+                      double.parse(scale.toStringAsFixed(2)) - 0.22;
+                  var truncatedZoom = double.parse(zoom.toStringAsFixed(2));
+                  // print("$truncatedScale");
+                  getScaleAndZoom(truncatedScale, truncatedZoom);
+                  // print("$truncatedZoom");
 
-                  // print("$item");
+                  for (int i = 0; i < positions.length; i++) {
+                    var item = positions[i];
+                    // print("$item");
+                    // 27.99-((27.99*0.9)+(27.99*0.63))
 
-                  // 27.99-((27.99*0.9)+(27.99*0.63))
+                    double posx = item["inposx"]; // 90
+                    double posy = item["inposy"];
 
-                  double posx = item["inposx"]; // 27.99
-                  double posy = item["inposy"];
+                    double newXLocation = posx -
+                        ((posx * truncatedScale) + (posx * truncatedZoom));
+                    double newYLocation = posy -
+                        ((posy * truncatedScale) + (posy * truncatedZoom));
 
-                  double newXLocation =
-                      posx - ((posx * truncatedScale) + (posx * truncatedZoom));
-                  double newYLocation =
-                      posx - ((posy * truncatedScale) + (posy * truncatedZoom));
+                    var truncatedNewXLocation =
+                        double.parse(newXLocation.toStringAsFixed(2));
+                    var truncatedNewYLocation =
+                        double.parse(newYLocation.toStringAsFixed(2));
 
-                  var truncatedNewXLocation =
-                      double.parse(newXLocation.toStringAsFixed(2));
-                  var truncatedNewYLocation =
-                      double.parse(newYLocation.toStringAsFixed(2));
+                    print("newLocation: $truncatedNewXLocation");
+                    print("newLocation: $truncatedNewYLocation");
 
-                  print("newLocation: $truncatedNewXLocation");
-                  // print("newLocation: $truncatedNewYLocation");
+                    item["posx"] = truncatedNewXLocation;
+                    // item["posy"] = truncatedNewXLocation;
+                    positions[i]["posx"] = truncatedNewXLocation;
+                    // positions[i]["posy"] = truncatedNewYLocation;
 
-                  // item["posx"] = truncatedNewXLocation;
-                  // positions[i]["posx"] = truncatedNewXLocation;
-                  // positions[i]["posy"] = truncatedNewYLocation;
+                    callback?.call(
+                        i, truncatedNewXLocation, truncatedNewYLocation);
+                  }
+                  print("stackWidgets: ${stackWidgets}");
+                  print("positions: ${positions}");
+                  print("------");
+                  print("---------");
+                  clearWidgets();
+                  print("Stack Widgets:");
+                  print(stackWidgets);
+                  print("positions:");
+                  print(positions);
 
-                  callback?.call(
-                      i, truncatedNewXLocation, truncatedNewYLocation);
-                }
-                print("stackWidgets: ${stackWidgets}");
-                print("positions: ${positions}");
-                print("------");
+                  addwidgets(width, photo, onTap);
+                  //
+                  //
+                  //
+                  print(positions.length);
+                  print(positions);
+                  for (var i = 0; i < positions.length; i++) {
+                    var p = Positioned(
+                        left: positions[i]["posx"],
+                        top: positions[i]["posy"],
+                        child: Draggable(
+                          childWhenDragging: Container(),
+                          feedback: Container(
+                            height: 15,
+                            width: 15,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle, color: Colors.white),
+                          ),
+                          onDragEnd: (dragDetails) {
+                            // posx = dragDetails.offset.dx;
+                            // // if applicable, don't forget offsets like app/status bar
+                            // posx = dragDetails.offset.dy;
+                          },
+                          child: Container(
+                            height: 15,
+                            width: 15,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle, color: Colors.white),
+                          ),
+                        ));
+                    stackWidgets.add(p);
+                  }
+                  print("positions:");
+                  print(positions);
+                  print("Stack Widgets:");
+                  print(stackWidgets);
+                });
               },
               child: Image.file(
                 photo,
                 fit: BoxFit.fill,
               ),
-
-              // child: InteractiveViewer(
-              //   panEnabled: false, // Set it to false to prevent panning.
-              //   boundaryMargin: EdgeInsets.all(80),
-              //   minScale: 0.5,
-              //   maxScale: 4,
-              //   child: Image.file(
-              //     photo,
-              //     fit: BoxFit.fill,
-              //   ),
-              // ),
             ),
-
-            // onVerticalDragStart: (details) {
-            //   print("onVerticalDragStart");
-            //   print(details.localPosition.dy);
-            // },
-            // onVerticalDragEnd: (details) {
-            //   print("onVerticalDragEnd");
-            //   print(details.primaryVelocity);
-            // },
-            // onVerticalDragUpdate: (details) {
-            //   print("onVerticalDragUpdate");
-            //   print(details.delta);
-            //   print(details.localPosition.dy);
-            // },
             onDoubleTap: () {},
-
-            // onHorizontalDragUpdate: (details) {
-            //   print("onHorizontalDragUpdate");
-            //   print(details.localPosition.dx);
-            //   print(stackWidgets.length);
-
-            // if (stackWidgets.length > 0) {
-            //   for (var item in stackWidgets) {
-            //     try {
-            //       var material = item as Material;
-            //       if (material != null) {
-            //         print("type cast: material");
-            //         var container = material.child as Container;
-            //         if (container != null) {
-            //           print("type cast: container");
-            //           var gestureDetector =
-            //               container.child as GestureDetector;
-            //           if (gestureDetector != null) {
-            //             print("type cast: gestureDetector");
-            //             var photoView = gestureDetector.child as PhotoView;
-            //             if (photoView != null) {
-            //               print("type cast: photoView");
-            //               print("found photoView");
-            //               int initialScale = photoView.initialScale;
-            //               int maxScale = photoView.maxScale;
-            //               print(initialScale);
-            //               print(maxScale);
-            //             }
-            //           }
-            //         }
-            //       }
-            //     } catch (error) {
-            //       print(error);
-            //     }
-
-            //     // Positioned? positionedItem = item;
-            //     // if (positionedItem != null) {
-            //     //   print(positionedItem);
-            //     //   print(
-            //     //       "positionedItem.top: " + positionedItem.top.toString());
-            //     //   print("positionedItem.left: " +
-            //     //       positionedItem.left.toString());
-            //     //   print("positionedItem.width: " +
-            //     //       positionedItem.width.toString());
-            //     //   print("positionedItem.height: " +
-            //     //       positionedItem.height.toString());
-            //     // } else {
-            //     //   PhotoView? photoView = item;
-            //     //   if (photoView != null) {
-            //     //     print("photoView.customSize");
-            //     //     print(photoView.customSize);
-            //     //   }
-            //     // }
-            //   }
-            // } else {
-            //   print("stackWidgets is empty");
-            // }
-            // },
-
-            // child: PhotoView(
-            //   imageProvider: FileImage(photo),
-            //   onScaleEnd: (context, details, value) {
-            //     print(value.scale);
-            //     print(value.position);
-            //   },
-            // ),
           ),
         ),
       ));
     }
-    // else {
-    //   addTapWidgets();
-    // }
 
-    // if (stackWidgets.contains(
-    //   Material(
-    //     color: Color.fromARGB(0, 26, 14, 14),
-    //     child: Container(
-    //       height: 500,
-    //       width: 100.w,
-    //       child: GestureDetector(
-    //         onTapDown: (details) {
-    //           print(details.localPosition.dx);
-    //           //global position
-    //           print(details.localPosition.dy);
-    //           // setState(() {
-    //           posx = details.localPosition.dx;
-    //           posy = details.localPosition.dy;
-    //           setpositions(details.localPosition.dx, details.localPosition.dy);
-    //           print(stackWidgets.length);
-    //           addTapWidgets();
-    //         },
-    //         onTap: onTap,
-    //         child: Image.file(
-    //           photo,
-    //           fit: BoxFit.cover,
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // )) {
-    //   addTapWidgets();
-    // } else {
-    //   stackWidgets.add(
-    //     Material(
-    //       color: Color.fromARGB(0, 26, 14, 14),
-    //       child: Container(
-    //         height: 500,
-    //         width: 100.w,
-    //         child: GestureDetector(
-    //           onTapDown: (details) {
-    //             print(details.localPosition.dx);
-    //             //global position
-    //             print(details.localPosition.dy);
-    //             // setState(() {
-    //             posx = details.localPosition.dx;
-    //             posy = details.localPosition.dy;
-    //             setpositions(
-    //                 details.localPosition.dx, details.localPosition.dy);
-    //             print(stackWidgets.length);
-    //             addTapWidgets();
-    //             // setState(() {
-    //             //   stackWidgets.add(Positioned(
-    //             //       left: posx,
-    //             //       top: posy,
-    //             //       child: Container(
-    //             //         height: 10,
-    //             //         width: 10,
-    //             //         decoration: BoxDecoration(
-    //             //             shape: BoxShape.circle, color: Colors.white),
-    //             //       )));
-    //             // });
-    //             //local position
-    //           },
-    //           onTap: onTap,
-    //           child: Image.file(
-    //             photo,
-    //             fit: BoxFit.cover,
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   );
-    // }
     notifyListeners();
   }
 

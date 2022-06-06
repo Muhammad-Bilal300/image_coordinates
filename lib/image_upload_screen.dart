@@ -190,6 +190,7 @@ class _HeroAnimationState extends State<HeroAnimation> {
                     onPressed: () {
                       if (selected) {
                         provider.clearWidgets();
+                        provider.clearPositions();
                       }
                       Navigator.push(
                           context,
@@ -230,6 +231,7 @@ class _HeroAnimationState extends State<HeroAnimation> {
                       onTap: () {
                         if (selected) {
                           provider.clearWidgets();
+                          provider.clearPositions();
                         }
                         Navigator.push(
                             context,
