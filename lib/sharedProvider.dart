@@ -154,6 +154,7 @@ class SharedImageProvider extends ChangeNotifier {
   addwidgets(double width, File photo, VoidCallback onTap) {
     if (stackWidgets.isEmpty) {
       stackWidgets.add(Material(
+        borderOnForeground: false,
         color: Color.fromARGB(0, 26, 14, 14),
         child: Container(
           height: 500,
@@ -266,7 +267,7 @@ class SharedImageProvider extends ChangeNotifier {
               maxZoomWidth: 1800,
               maxZoomHeight: 1800,
               // canvasColor: Colors.grey,
-              // backgroundColor: Colors.orange,
+              backgroundColor: Colors.white,
               colorScrollBars: Colors.purple,
               opacityScrollBars: 0.4,
               scrollWeight: 0.0,
@@ -279,67 +280,125 @@ class SharedImageProvider extends ChangeNotifier {
                 // print("Widget clicked");
               },
               onPositionUpdate: (Offset position) {
-                // print("position.direction: ${position.direction}");
-                // // print("position.distanceSquared: ${position.distanceSquared}");
-                // // print("position.distance: ${position.distance}");
-                // print("position.dx: ${position.dx}");
-                // print("position.dy: ${position.dy}");
+                WidgetsBinding.instance?.addPostFrameCallback((_) {
+                  // print("position.direction: ${position.direction}");
 
-                var truncatedDX =
-                    double.parse(position.dx.toStringAsFixed(2)); // 682
-                var truncatedDY =
-                    double.parse(position.dy.toStringAsFixed(2)); // 682
-
-                for (int i = 0; i < positions.length; i++) {
-                  var item = positions[i];
-
-                  double posx = item["inposx"]; // 190
-                  double posy = item["inposy"]; // 271
+                  var truncatedDX =
+                      double.parse(position.dx.toStringAsFixed(2));
+                  var truncatedDY =
+                      double.parse(position.dy.toStringAsFixed(2));
 
                   var truncatedScale =
-                      double.parse(imgScale.toStringAsFixed(2)); // 0.78
+                      double.parse(imgScale.toStringAsFixed(2));
+                  var truncatedZoom = double.parse(imgZoom.toStringAsFixed(2));
 
-                  var finalX = ((truncatedDX * truncatedScale) + posx);
-                  var finalY = ((truncatedDY * truncatedScale) + posy);
+                  var truncatedDirection =
+                      double.parse(position.direction.toStringAsFixed(2));
 
-                  // (1*0.2)+188
-                  // width - ((dx*scale) + (posx*scale))
-                  // 600-((0*0.18)+(188*0.18))
+                  print("===============");
+                  print("truncatedScale: ${truncatedScale}");
+                  print("truncatedZoom: ${truncatedZoom}");
 
-                  print("truncatedDX ${truncatedDX}");
-                  print("posx ${posx}");
-                  print("truncatedScale ${truncatedScale}");
-                  print("finalX ${finalX}");
-                  print("finalX ${finalY}");
-                }
+                  for (int i = 0; i < positions.length; i++) {
+                    var item = positions[i];
 
+                    double posx = item["inposx"];
+                    double posy = item["inposy"];
+
+                    print("posx ${posx}");
+                    print("posy ${posy}");
+
+                    var Xa = (double.parse(
+                        ((posx * truncatedScale) - truncatedZoom)
+                            .toStringAsFixed(2)));
+                    var Xb =
+                        double.parse((posx - truncatedDX).toStringAsFixed(2));
+                    var finalX = double.parse((Xa + Xb).toStringAsFixed(2));
+
+                    print("Xa: ${Xa}");
+                    print("Xb: ${Xb}");
+                    print("finalX: ${finalX}");
+
+                    var Ya = (double.parse(
+                        ((posy * truncatedScale) - truncatedZoom)
+                            .toStringAsFixed(2)));
+                    var Yb =
+                        double.parse((posy - truncatedDY).toStringAsFixed(2));
+                    var finalY = double.parse((Ya + Yb).toStringAsFixed(2)) -
+                        double.parse((truncatedZoom).toStringAsFixed(2));
+
+                    print("Ya: ${Ya}");
+                    print("Yb: ${Yb}");
+                    print("finalY: ${finalY}");
+
+                    // (truncatedZoom / 60) * (200 * 10);
+
+                    var constantFactorX = (imgZoom / 17) *
+                        (500 * 10); //(truncatedZoom * ((finalX).abs()) * 100);
+                    // var constantFactorY =
+                    //     (truncatedZoom * ((finalY).abs()) * 100);
+                    var constantFactorY = (imgZoom / 20) * (800 * 10);
+
+                    item["posx"] =
+                        finalX + ((truncatedZoom > 0) ? constantFactorX : 0);
+                    item["posy"] =
+                        finalY + ((truncatedZoom > 0) ? constantFactorY : 0);
+
+                    print("===============");
+
+                    // 0.12 * 333 = 40
+                    // x = 333
+
+                    // y = 0.12 * 2780
+
+                    // 0.12 * x = 40
+
+                    // 0.17 * 353 = 60
+                    // x = 353
+                    // 0.17 * x = 60
+                  }
+                  clearWidgets();
+                  addwidgets(width, photo, onTap);
+                  for (var i = 0; i < positions.length; i++) {
+                    var p = Positioned(
+                        left: positions[i]["posx"],
+                        top: positions[i]["posy"],
+                        child: Draggable(
+                          childWhenDragging: Container(),
+                          feedback: Container(
+                            height: 15,
+                            width: 15,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle, color: Colors.white),
+                          ),
+                          onDragEnd: (dragDetails) {
+                            // posx = dragDetails.offset.dx;
+                            // // if applicable, don't forget offsets like app/status bar
+                            // posx = dragDetails.offset.dy;
+                          },
+                          child: Container(
+                            height: 15,
+                            width: 15,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle, color: Colors.white),
+                          ),
+                        ));
+                    stackWidgets.add(p);
+                  }
+                  // print("positions:");
+                  // print(positions);
+                  // print("Stack Widgets:");
+                  // print(stackWidgets);
+                });
                 // ((682-190)*0.78)-190
-
-                // ZeroPositions(position.dx, position.dy);
-                // for (var i = 0; i < positions.length; i++) {
-                //   positions[i]["posx"] =
-                //       positions[i]["posx"] + positions[i]["posx"];
-                //   positions[i]["posy"] =
-                //       positions[i]["posy"] + positions[i]["posy"];
-                //   print("abc" + i.toString());
-                // }
-                // print(position);
-                // for (var i = 1; i < positions.length; i++) {
-                //   // setpositions(position.dx, position.dy);
-                //   print("abc => " + positions[i].toString());
-                // }
-                // updatePositions(position.dx, position.dy);
-                // print(posx);
-                // print(posy);
               },
               onScaleUpdate: (double scale, double zoom) {
                 WidgetsBinding.instance?.addPostFrameCallback((_) {
                   var truncatedScale =
                       double.parse(scale.toStringAsFixed(2)) - 0.22;
                   var truncatedZoom = double.parse(zoom.toStringAsFixed(2));
-                  getScaleAndZoom(truncatedScale, truncatedZoom);
+                  getScaleAndZoom(truncatedScale, zoom);
                 });
-
                 return;
                 WidgetsBinding.instance?.addPostFrameCallback((_) {
                   // Add Your Code here.
@@ -429,7 +488,8 @@ class SharedImageProvider extends ChangeNotifier {
               },
               child: Image.file(
                 photo,
-                fit: BoxFit.fill,
+                width: 100.w,
+                fit: BoxFit.cover,
               ),
             ),
             onDoubleTap: () {},

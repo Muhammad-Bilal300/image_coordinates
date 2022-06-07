@@ -24,28 +24,32 @@ class _ImagePreviewState extends State<ImagePreview> {
   double _x = 0;
   double _y = 0;
   ImagePreview? imagePreview;
-  
+
   @override
   @override
   void initState() {
+    // print("width");
+    // print(WidgetsBinding.instance?.window.physicalSize.width);
+    // print("height");
+    // print(WidgetsBinding.instance?.window.physicalSize.height);
     var auth;
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       Provider.of<SharedImageProvider>(context, listen: false).clearWidgets();
-      print("Stack Widgets:");
-      print(Provider.of<SharedImageProvider>(context, listen: false)
-          .stackWidgets);
-      print("positions:");
-      print(Provider.of<SharedImageProvider>(context, listen: false).positions);
+      // print("Stack Widgets:");
+      // print(Provider.of<SharedImageProvider>(context, listen: false)
+      //     .stackWidgets);
+      // print("positions:");
+      // print(Provider.of<SharedImageProvider>(context, listen: false).positions);
       Provider.of<SharedImageProvider>(context, listen: false)
           .addwidgets(widget.width, widget.photo, widget.onTap);
       // print(Provider.of<SharedImageProvider>(context, listen: false)
       //     .widgetList
       //     .length);
       // print("Positions");
-      print(Provider.of<SharedImageProvider>(context, listen: false)
-          .positions
-          .length);
-      print(Provider.of<SharedImageProvider>(context, listen: false).positions);
+      // print(Provider.of<SharedImageProvider>(context, listen: false)
+      //     .positions
+      //     .length);
+      // print(Provider.of<SharedImageProvider>(context, listen: false).positions);
       for (var i = 0;
           i <
               Provider.of<SharedImageProvider>(context, listen: false)
@@ -81,9 +85,9 @@ class _ImagePreviewState extends State<ImagePreview> {
             .stackWidgets
             .add(p);
       }
-      print("Stack Widgets:");
-      print(Provider.of<SharedImageProvider>(context, listen: false)
-          .stackWidgets);
+      // print("Stack Widgets:");
+      // print(Provider.of<SharedImageProvider>(context, listen: false)
+      //     .stackWidgets);
     });
     // print(Provider.of<SharedImageProvider>(context, listen: false).widgetList);
 
@@ -151,7 +155,7 @@ class _ImagePreviewState extends State<ImagePreview> {
             child: Column(
               children: [
                 Container(
-                  height: 500,
+                  height: 400,
                   child: Stack(
                       children:
                           List.generate(provider.widgetList.length, (index) {
